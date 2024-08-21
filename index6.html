@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Badminton Groups</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f8ff;
+            color: #333;
+        }
+        h1, h2 {
+            color: #0056b3;
+            text-align: center;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        textarea {
+            width: 80%;
+            height: 100px;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .group {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #e6f7ff;
+        }
+        .group h3 {
+            margin-top: 0;
+            color: #0056b3;
+        }
+        .group p {
+            margin: 0;
+        }
+        #groups {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .group {
+            width: 45%;
+            margin: 10px;
+        }
+        .set {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .set h3 {
+            margin-top: 0;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Register for Badminton</h1>
+    <form id="registrationForm">
+        <textarea id="names" placeholder="Enter all names separated by commas"></textarea>
+        <button type="submit">Generate Groups</button>
+    </form>
+    <button id="refreshButton" style="display:none;">Refresh Groups</button>
+    <h2>Groups</h2>
+    <div id="groups"></div>
+    <h2>Group Sets</h2>
+    <div id="groupSets"></div>
+
+    <script>
+        document.getElementById('registrationForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const names = document.getElementById('names').value.split(',').map(name => name.trim()).filter(name => name);
+            if (names.length >= 16) {
+                generateGroups(names);
+                document.getElementById('refreshButton').style.display = 'block';
+            } else {
+                alert('Please enter at least 16 names.');
+            }
+        });
+
+        document.getElementById('refreshButton').addEventListener('click', function() {
+            const names = document.getElementById('names').value.split(',').map(name => name.trim()).filter(name => name);
+            generateGroups(names);
+        });
+
+        const groupSets = [];
+
+        function generateGroups(names) {
+            const shuffledNames = names.sort(() => Math.random() - 0.5);
+            const groups = [[], [], [], []];
+            for (let i = 0; i < 16; i++) {
+                groups[i % 4].push(shuffledNames[i]);
+            }
+            groupSets.push(groups);
+            displayGroups(groups);
+            displayGroupSets();
+        }
+
+        function displayGroups(groups) {
+            const groupsDiv = document.getElementById('groups');
+            groupsDiv.innerHTML = '';
+            groups.forEach((group, index) => {
+                const groupDiv = document.createElement('div');
+                groupDiv.className = 'group';
+                groupDiv.innerHTML = `<h3>Group ${index + 1}</h3><p>${group.join(', ')}</p>`;
+                groupsDiv.appendChild(groupDiv);
+            });
+        }
+
+        function displayGroupSets() {
+            const groupSetsDiv = document.getElementById('groupSets');
+            groupSetsDiv.innerHTML = '';
+            groupSets.forEach((set, setIndex) => {
+                const setDiv = document.createElement('div');
+                setDiv.className = 'set';
+                setDiv.innerHTML = `<h3>Set ${setIndex + 1}</h3>`;
+                set.forEach((group, groupIndex) => {
+                    const groupDiv = document.createElement('div');
+                    groupDiv.className = 'group';
+                    groupDiv.innerHTML = `<h4>Group ${groupIndex + 1}</h4><p>${group.join(', ')}</p>`;
+                    setDiv.appendChild(groupDiv);
+                });
+                groupSetsDiv.appendChild(setDiv);
+            });
+        }
+    </script>
+</body>
+</html>
